@@ -53,6 +53,7 @@ own_. [sherifabdlnaby/elastdocker][elastdocker] is one example among others of p
    * [Initial setup](#initial-setup)
      * [Setting up user authentication](#setting-up-user-authentication)
      * [Injecting data](#injecting-data)
+       * [logstash](#logstash)
      * [Default Kibana index pattern creation](#default-kibana-index-pattern-creation)
 1. [Configuration](#configuration)
    * [How to configure Elasticsearch](#how-to-configure-elasticsearch)
@@ -89,7 +90,7 @@ By default, the stack exposes the following ports:
 * 9600: Logstash monitoring API
 * 9200: Elasticsearch HTTP
 * 9300: Elasticsearch TCP transport
-* 5601: Kibana
+* [5601: Kibana](http://localhost:5601/)
 
 **:warning: Elasticsearch's [bootstrap checks][booststap-checks] were purposely disabled to facilitate the setup of the
 Elastic stack in development environments. For production setups, we recommend users to set up their host according to
@@ -232,6 +233,9 @@ $ cat /path/to/logfile.log | nc -c localhost 5000
 ```
 
 You can also load the sample data provided by your Kibana installation.
+
+#### logstash
+You can also inject data by adding files to the log folder.
 
 ### Default Kibana index pattern creation
 
