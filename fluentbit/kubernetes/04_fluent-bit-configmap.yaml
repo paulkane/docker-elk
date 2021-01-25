@@ -8,7 +8,7 @@ metadata:
 data:
   # Configuration files: server, input, filters and output
   # ======================================================
-  fluent-bit.conf: |
+  fluent-bit-service.conf: |
     [SERVICE]
         Flush         1
         Log_Level     info
@@ -17,10 +17,6 @@ data:
         HTTP_Server   On
         HTTP_Listen   0.0.0.0
         HTTP_Port     2020
-
-    @INCLUDE input-kubernetes.conf
-    @INCLUDE filter-kubernetes.conf
-    @INCLUDE output-elasticsearch.conf
 
   input-kubernetes.conf: |
     [INPUT]
@@ -31,7 +27,8 @@ data:
         DB                /var/log/flb_kube.db
         Mem_Buf_Limit     5MB
         Skip_Long_Lines   On
-        Refresh_Interval  10
+        Refresh_Interval  5
+        Skip_Long_Lines  On
 
   filter-kubernetes.conf: |
     [FILTER]
@@ -51,8 +48,13 @@ data:
         Match         kube.*
         Key_Name      log
         Parser        hazelcast
-        #Parser        docker
         Reserve_Data  On
+
+  fluent-bit.conf: |-
+    @INCLUDE fluent-bit-service.conf
+    @INCLUDE input-kubernetes.conf
+    @INCLUDE filter-kubernetes.conf
+    @INCLUDE output-elasticsearch.conf
 
   output-elasticsearch.conf: |
     [OUTPUT]
@@ -62,9 +64,10 @@ data:
         Port            9200
         Logstash_Format On
         Replace_Dots    On
-        Retry_Limit     False
         HTTP_User       elastic
         HTTP_Passwd     changeme
+        Retry_Limit     10
+        Time_Key        @timestamp
 
   parsers.conf: |
     [PARSER]
