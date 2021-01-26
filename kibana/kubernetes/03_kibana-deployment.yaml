@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    role: kibana
+    name: kibana
+    service: logging
+  name: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: kibana
+  template:
+    metadata:
+      labels:
+        role: kibana
+        name: kibana
+        service: logging
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:7.10.2
+#          command: [ "/bin/bash", "-c", "/usr/share/kibana/bin/kibana-plugin remove x-pack; /usr/local/bin/kibana-docker" ]
+          ports:
+            - containerPort: 5601
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/kibana/config/kibana.yml
+              subPath: kibana.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kibana-config
